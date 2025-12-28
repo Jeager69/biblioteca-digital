@@ -2,6 +2,7 @@ package com.biblioteca.biblioteca_digital.model;
 
 import java.time.LocalDate;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -16,12 +17,30 @@ public class Libro {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String titulo;
+
     private String autor;
+
+    @Column(unique = true)
     private String isbn;
+
+    @Column(length = 500)
     private String portadaUrl;
 
     private LocalDate fechaPublicacion;
+
+    // =========================
+    // GETTERS & SETTERS
+    // =========================
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getTitulo() {
         return titulo;
