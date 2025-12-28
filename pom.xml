@@ -68,6 +68,20 @@
       <artifactId>azure-storage-blob</artifactId>
       <version>12.25.0</version>
     </dependency>
+
+        <!-- Azure Identity (Managed Identity / DefaultAzureCredential) -->
+    <dependency>
+        <groupId>com.azure</groupId>
+        <artifactId>azure-identity</artifactId>
+        <version>1.11.4</version>
+    </dependency>
+
+    <!-- Azure Blob Storage -->
+    <dependency>
+        <groupId>com.azure</groupId>
+        <artifactId>azure-storage-blob</artifactId>
+        <version>12.25.2</version>
+    </dependency>
   </dependencies>
 
   <build>

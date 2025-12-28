@@ -1,5 +1,6 @@
 package com.biblioteca.biblioteca_digital.config;
 
+import com.azure.identity.DefaultAzureCredentialBuilder;
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.BlobServiceClientBuilder;
 import org.springframework.context.annotation.Bean;
@@ -18,11 +19,13 @@ public class AzureBlobConfig {
     @Bean
     public BlobServiceClient blobServiceClient() {
 
-        String connectionString =
-                env.getProperty("AZURE_STORAGE_CONNECTION_STRING");
+        String accountName = env.getProperty("AZURE_STORAGE_ACCOUNT_NAME");
+
+        String endpoint = "https://" + accountName + ".blob.core.windows.net";
 
         return new BlobServiceClientBuilder()
-                .connectionString(connectionString)
+                .endpoint(endpoint)
+                .credential(new DefaultAzureCredentialBuilder().build())
                 .buildClient();
     }
 }
