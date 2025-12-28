@@ -1,19 +1,15 @@
 package com.biblioteca.biblioteca_digital.controller;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.azure.storage.blob.BlobClient;
-import com.azure.storage.blob.BlobContainerClient;
-import com.azure.storage.blob.BlobServiceClient;
-
 import com.biblioteca.biblioteca_digital.model.Libro;
 import com.biblioteca.biblioteca_digital.repository.LibroRepository;
+import com.biblioteca.biblioteca_digital.service.BlobStorageService;
 
 @RestController
 @RequestMapping("/api/libros")
@@ -23,9 +19,7 @@ public class LibroController {
     private LibroRepository libroRepository;
 
     @Autowired
-    private BlobServiceClient blobServiceClient;
-
-    private static final String CONTAINER_NAME = "portadas-libros";
+    private BlobStorageService blobStorageService;
 
     // =========================
     // LISTAR LIBROS
@@ -44,7 +38,7 @@ public class LibroController {
     }
 
     // =========================
-    // SUBIR PORTADA A AZURE BLOB
+    // SUBIR PORTADA
     // =========================
     @PostMapping("/{id}/portada")
     public ResponseEntity<?> subirPortada(
@@ -58,21 +52,7 @@ public class LibroController {
         }
 
         try {
-            // Obtener contenedor
-            BlobContainerClient containerClient =
-                    blobServiceClient.getBlobContainerClient(CONTAINER_NAME);
-
-            // Crear nombre único
-            String fileName = UUID.randomUUID() + "-" + file.getOriginalFilename();
-
-            // Crear blob
-            BlobClient blobClient = containerClient.getBlobClient(fileName);
-
-            // Subir archivo
-            blobClient.upload(file.getInputStream(), file.getSize(), true);
-
-            // Guardar URL en BD
-            String urlPortada = blobClient.getBlobUrl();
+            String urlPortada = blobStorageService.subirPortada(file, id);
             libro.setPortadaUrl(urlPortada);
             libroRepository.save(libro);
 
@@ -80,7 +60,7 @@ public class LibroController {
 
         } catch (Exception e) {
             return ResponseEntity.internalServerError()
-                    .body("Error al subir la portada: " + e.getMessage());
+                    .body("Error al subir portada: " + e.getMessage());
         }
     }
 }
