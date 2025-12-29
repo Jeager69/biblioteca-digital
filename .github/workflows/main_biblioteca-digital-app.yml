@@ -41,7 +41,7 @@ jobs:
       contents: read #This is required for actions/checkout
   
     steps:
-      - name: Download artifact from build job
+      - name: Download artifact
         uses: actions/download-artifact@v4
         with:
           name: java-app
@@ -53,37 +53,28 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_8D3A4B9FA5264BA493E8CD255398EE8A }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_82C1B355705C454C87ADB6B63FD90ACB }}
 
-      - name: Deploy to DEV slot
+      # 🚀 Production
+      - name: Deploy Production
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: biblioteca-digital-app
+          slot-name: Production
+          package: biblioteca-digital-0.0.1-SNAPSHOT.jar
+
+      # 🚀 DEV
+      - name: Deploy DEV
         uses: azure/webapps-deploy@v3
         with:
           app-name: biblioteca-digital-app
           slot-name: dev
           package: biblioteca-digital-0.0.1-SNAPSHOT.jar
 
-  deploy-staging:
-    runs-on: ubuntu-latest
-    needs: build
-    permissions:
-      id-token: write
-      contents: read
-
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: java-app
-
-      - name: Login to Azure
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_BE49D4A431CB4927A6415EA5EA4B232F }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_8D3A4B9FA5264BA493E8CD255398EE8A }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_82C1B355705C454C87ADB6B63FD90ACB }}
-
-      - name: Deploy to STAGING slot
+      # 🚀 STAGING
+      - name: Deploy STAGING
         uses: azure/webapps-deploy@v3
         with:
           app-name: biblioteca-digital-app
           slot-name: staging
           package: biblioteca-digital-0.0.1-SNAPSHOT.jar
-          
+
 
